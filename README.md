@@ -9,5 +9,5 @@ The first parts are coded in MATLAB and illustrate the basic importance sampling
 
 ## TODO
 
-1. Upload ~~SEIR~~, ~~SEEIIRp~~, SEIAR.
+1. Upload ~~SEIR~~, ~~SEEIIRp~~, ~~SEIAR~~.
 2. Upload Particle filter code.
