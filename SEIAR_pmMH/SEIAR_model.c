@@ -425,11 +425,11 @@ double SEIAR_likelihood_alive(gsl_rng *r, PartStruct *X, gsl_vector *theta, data
 
     
     // calculate the parameters      
-    X->par->data[0] = theta->data[0]*theta->data[4] / theta->data[2];   //betaS
+    X->par->data[0] = theta->data[0]*theta->data[4] / (theta->data[2] *theta->data[3]);   //betaS
     X->par->data[1] = 1.0/theta->data[1];                               // 1/sigma
     X->par->data[2] = 1.0/theta->data[2];                               // 1/gamma
     X->par->data[3] = theta->data[3];                                   // p
-    X->par->data[4] = theta->data[0]*(1-theta->data[4]) / theta->data[2]; //betaP
+    X->par->data[4] = theta->data[0]*(1-theta->data[4]) / (theta->data[2] *theta->data[3]); //betaP
     
     size_t length = ts->vec->size;
     
@@ -486,11 +486,11 @@ double SEIAR_likelihood_alive(gsl_rng *r, PartStruct *X, gsl_vector *theta, data
 double SEIAR_likelihood_is(gsl_rng *r, PartStruct *X, gsl_vector *theta, data_s *ts){
     // calculate the marginal likelihood using importance sampling particle filter
     
-    X->par->data[0] = theta->data[0]*theta->data[4] / theta->data[2];     //betaS
+    X->par->data[0] = theta->data[0]*theta->data[4] / (theta->data[2] * theta->data[3]);     //betaS
     X->par->data[1] = 1.0/theta->data[1];                                 // 1/sigma
     X->par->data[2] = 1.0/theta->data[2];                                 // 1/gamma
     X->par->data[3] = theta->data[3];                                     // p
-    X->par->data[4] = theta->data[0]*(1-theta->data[4]) / theta->data[2]; //betaP
+    X->par->data[4] = theta->data[0]*(1-theta->data[4]) / (theta->data[2] *theta->data[3]); //betaP
 
     size_t length = ts->vec->size;
     

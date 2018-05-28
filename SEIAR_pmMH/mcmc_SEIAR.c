@@ -43,7 +43,7 @@ int main(int argc, const char * argv[]) {
     // boundaries and initial point.
     m->low->data = (double[]){0.1, 0.1, 0.5, 0.5, 0.0};
     m->high->data = (double[]){15.0, 15.0, 15.0, 1.0, 1.0};
-    m->theta_init->data = (double[]){2.0, 1.0, 1.0, 0.9, 0.5};
+    m->theta_init->data = (double[]){8.0, 1.0, 1.0, 0.9, 0.5};
     
     // set the covariance matrix
     m->sigma = gsl_matrix_alloc(m->dim,m->dim);
