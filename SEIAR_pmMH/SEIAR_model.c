@@ -85,7 +85,7 @@ void SEIAR_is(gsl_rng *r, PartStruct *X, int NR, int NF){
             // calculate the rates of the original process.
             int E = (Z[0]-Z[1]-Z[2]);
             
-            b[0] = (N-Z[0])*(betaP*(Z[1]-Z[4])+betaS*(Z[4]-Z[3]))*(Z[1]-Z[3]);
+            b[0] = (N-Z[0])*(betaP*(Z[1]-Z[4])+betaS*(Z[4]-Z[3]));
             b[1] = sigma*p*E;
             b[2] = sigma*(1-p)*E;
             b[3] = gamma*(Z[4]-Z[3]);
@@ -218,7 +218,7 @@ void SEIAR_is(gsl_rng *r, PartStruct *X, int NR, int NF){
             // calculate the rates of the original process.
             int E = (Z[0]-Z[1]-Z[2]);
             
-            b[0] = (N-Z[0])*(betaP*(Z[1]-Z[4])+betaS*(Z[4]-Z[3]))*(Z[1]-Z[3]);
+            b[0] = (N-Z[0])*(betaP*(Z[1]-Z[4])+betaS*(Z[4]-Z[3]));
             b[1] = sigma*p*E;
             b[2] = sigma*(1-p)*E;
             b[3] = gamma*(Z[4]-Z[3]);
@@ -352,7 +352,7 @@ double SEIAR_alive(gsl_rng *r, PartStruct *X, int NR, int NF){
             
             int E = (Z[0]-Z[1]-Z[2]);
             
-            b[0] = (N-Z[0])*(betaP*(Z[1]-Z[4])+betaS*(Z[4]-Z[3]))*(Z[1]-Z[3]);
+            b[0] = (N-Z[0])*(betaP*(Z[1]-Z[4])+betaS*(Z[4]-Z[3]));
             b[1] = sigma*p*E;
             b[2] = sigma*(1-p)*E;
             b[3] = gamma*(Z[4]-Z[3]);
