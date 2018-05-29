@@ -67,6 +67,9 @@ typedef struct
     
     // pointer to the likelihood function
     double (*likePtr)(gsl_rng*, PartStruct *, gsl_vector* , data_s*);
+
+    // pointer to prior function
+    double (*prior)(gsl_vector*);
     
     
 } Config;

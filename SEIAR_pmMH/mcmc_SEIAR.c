@@ -108,11 +108,11 @@ int main(int argc, const char * argv[]) {
     // larger time series
 
     // Small boat
-//    m->ts = malloc(sizeof(data_s));
-//    m->ts->vec = gsl_vector_int_alloc(18);
-//    m->ts->vec->data = (int[]){0,0,3,7,19,16,15,25,8,8,6,8,4,2,1,0,0,1};
-//    m->ts->NF = 123;
-//    m->N = 150;
+    m->ts = malloc(sizeof(data_s));
+    m->ts->vec = gsl_vector_int_alloc(18);
+    m->ts->vec->data = (int[]){0,0,3,7,19,16,15,25,8,8,6,8,4,2,1,0,0,1};
+    m->ts->NF = 123;
+    m->N = 150;
 
     // med boat.
 //    m->ts = malloc(sizeof(data_s));
@@ -122,11 +122,11 @@ int main(int argc, const char * argv[]) {
 //    m->N = 500;
 
 //
-     m->ts = malloc(sizeof(data_s));
-     m->ts->vec = gsl_vector_int_alloc(26);
-     m->ts->vec->data = (int[]){0,0,0,4,3,12,6,26,28,60,58,99,110,103,91,66,52,22,18,13,11,4,2,5,2,1};
-     m->ts->NF = 796;
-     m->N = 1000;
+//     m->ts = malloc(sizeof(data_s));
+//     m->ts->vec = gsl_vector_int_alloc(26);
+//     m->ts->vec->data = (int[]){0,0,0,4,3,12,6,26,28,60,58,99,110,103,91,66,52,22,18,13,11,4,2,5,2,1};
+//     m->ts->NF = 796;
+//     m->N = 1000;
 
 //   N = 1000,
 //

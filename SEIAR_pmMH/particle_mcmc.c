@@ -225,7 +225,8 @@ void mcmc_time(Config *m){
 
     
     double like = m->likePtr(r,X,theta,m->ts);
-    
+    double curr_prior = m->prior(theta);
+
     int ar = 0, os = 0;
     
     time_t time_now = time(NULL);
@@ -250,12 +251,14 @@ void mcmc_time(Config *m){
         {
             os++;
             can_like = m->likePtr(r,X,theta_can,m->ts);
-            
+            double prior_can = m->prior(theta_can);
+
              // accept / reject step.
-            if( log(gsl_rng_uniform(r)) < can_like - like){
+            if( log(gsl_rng_uniform(r)) < can_like - like + prior_can - curr_prior){
                 
                 gsl_vector_memcpy(theta,theta_can);
                 like = can_like;
+                curr_prior = prior_can;
                 ar++;
             }
             
