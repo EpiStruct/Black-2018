@@ -48,7 +48,7 @@ int main(int argc, const char * argv[]) {
     // set the covariance matrix
     m->sigma = gsl_matrix_alloc(m->dim,m->dim);
     
-    FILE * f = fopen ("SEIAR_cov_mat.txt", "r");
+    FILE * f = fopen ("cov_mat/cov_small.txt", "r");
     if(f){
         gsl_matrix_fscanf(f,m->sigma);
         fclose(f);
@@ -60,7 +60,7 @@ int main(int argc, const char * argv[]) {
     }
     
 //    gsl_matrix_set_identity(m->sigma);
-    m->scale = 0.5;
+    m->scale = 0.3;
     
     m->part = atoi(argv[1]);
     m->thin = atoi(argv[2]);
@@ -92,13 +92,45 @@ int main(int argc, const char * argv[]) {
     int length = 15;
 
     // allocate struct to hold time-series data.
-    m->ts = malloc(sizeof(data_s));
-    m->ts->vec = gsl_vector_int_alloc(length);
-    m->ts->vec->data = (int[]){1,0,3,11,27,40,24,15,15,4,4,0,1,0,1};
-    m->ts->NF = 146;
-    m->N = 164;
-    
-    
+//    m->ts = malloc(sizeof(data_s));
+//    m->ts->vec = gsl_vector_int_alloc(length);
+//    m->ts->vec->data = (int[]){1,0,3,11,27,40,24,15,15,4,4,0,1,0,1};
+//    m->ts->NF = 146;
+//    m->N = 164;
+
+    // larger time series
+//     m->ts = malloc(sizeof(data_s));
+//     m->ts->vec = gsl_vector_int_alloc(23);
+//     m->ts->vec->data = (int[]){0,2,1,2,3,7,12,10,38,40,61,58,54,58,47,23,11,4,4,3,1,0,1};
+//     m->ts->NF = 440;
+//     m->N = 500;
+
+    // larger time series
+
+    // Small boat
+//    m->ts = malloc(sizeof(data_s));
+//    m->ts->vec = gsl_vector_int_alloc(18);
+//    m->ts->vec->data = (int[]){0,0,3,7,19,16,15,25,8,8,6,8,4,2,1,0,0,1};
+//    m->ts->NF = 123;
+//    m->N = 150;
+
+    // med boat.
+//    m->ts = malloc(sizeof(data_s));
+//    m->ts->vec = gsl_vector_int_alloc(20);
+//    m->ts->vec->data = (int[]) {0,0,2,12,5,20,25,44,34,53,47,42,34,25,23,12,4,3,2,1};
+//    m->ts->NF = 388;
+//    m->N = 500;
+
+//
+     m->ts = malloc(sizeof(data_s));
+     m->ts->vec = gsl_vector_int_alloc(26);
+     m->ts->vec->data = (int[]){0,0,0,4,3,12,6,26,28,60,58,99,110,103,91,66,52,22,18,13,11,4,2,5,2,1};
+     m->ts->NF = 796;
+     m->N = 1000;
+
+//   N = 1000,
+//
+
     m->max_samples = pow(10,7);
     
     // run the mcmc for given length of time.

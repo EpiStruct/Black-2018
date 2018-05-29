@@ -146,12 +146,12 @@ int check_support(Config *m, gsl_vector *can){
     
     for (int i = 0; i < m->dim; ++i)
     {
-        if (gsl_vector_get(can,i) < gsl_vector_get(m->low,i))
+        if (gsl_vector_get(can,i) <= gsl_vector_get(m->low,i))
         {
             return 0;
         }
         
-        if (gsl_vector_get(can,i) > gsl_vector_get(m->high,i))
+        if (gsl_vector_get(can,i) >= gsl_vector_get(m->high,i))
         {
             return 0;
         }
