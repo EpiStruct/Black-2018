@@ -30,6 +30,8 @@ typedef struct
 
 PartStruct* init_part(int,int,int);
 void resample_part(gsl_rng*, PartStruct* );
+void multinomial_resample(gsl_rng*, PartStruct* );
+
 void free_PartStruct(PartStruct *p);
 
 // time-series data struct
@@ -73,6 +75,8 @@ typedef struct
     
     
 } Config;
+
+
 
 void mcmc_time(Config*);
 

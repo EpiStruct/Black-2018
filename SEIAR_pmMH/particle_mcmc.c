@@ -138,7 +138,38 @@ void resample_part(gsl_rng *r, PartStruct *X){
     
 }
 
+void multinomial_resample(gsl_rng *r, PartStruct *X){
 
+    const int part = X->part;
+    const int events = X->events;
+    unsigned int n[part]; // holds the samples.
+
+    gsl_ran_multinomial(r,part,part,X->w,n);
+
+    // sample particles into the tmp array
+    int count = 0;
+
+    for (int k = 0; k < part; ++k)
+    {
+        for(int l = 0; l < n[k]; l++){
+
+            for (int i=0; i<events; i++) {
+                X->Z_tmp[count*events+i] = X->Z[k*events+i];
+            }
+            count ++;
+        }
+    }
+
+    // copy back into the original array.
+    for (int k = 0; k < part; ++k)
+    {
+        for (int i=0; i<events; i++) {
+            X->Z[k*events+i] = X->Z_tmp[k*events+i];
+        }
+
+    }
+
+}
 
 
 int check_support(Config *m, gsl_vector *can){

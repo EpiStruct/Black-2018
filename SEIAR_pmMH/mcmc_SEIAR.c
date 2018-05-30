@@ -10,6 +10,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <gsl/gsl_vector.h>
+#include <gsl/gsl_randist.h>
 #include <gsl/gsl_matrix.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -18,11 +19,20 @@
 #include "particle_mcmc.h"
 #include "SEIAR_model.h"
 
+double prior_eval(gsl_vector* theta){
+    // evaluate the prior at theta.
+    double R0_p = 1.0; //log(gsl_ran_gamma_pdf(theta->data[0],10.0,2.0/10.0));
+    double sig_p = log(gsl_ran_gamma_pdf(theta->data[1],10.0,1.0/10.0));
+    double gam_p = log(gsl_ran_gamma_pdf(theta->data[2],10.0,1.0/10.0));
+
+    return R0_p + sig_p +  gam_p;
+}
+
 int main(int argc, const char * argv[]) {
     
-    if (argc != 6){
+    if (argc != 7){
         
-        printf("arguments: <part> <thin> <runtime (mins)> <output name> <algo 1/2>\n");
+        printf("arguments: <part> <thin> <runtime (mins)> <output name> <algo 1/2> <ts 1,2,3 or 4>\n");
         exit(EXIT_FAILURE);
         
     }
@@ -48,7 +58,7 @@ int main(int argc, const char * argv[]) {
     // set the covariance matrix
     m->sigma = gsl_matrix_alloc(m->dim,m->dim);
     
-    FILE * f = fopen ("cov_mat/cov_small.txt", "r");
+    FILE * f = fopen ("cov_mat/cov_p.txt", "r");
     if(f){
         gsl_matrix_fscanf(f,m->sigma);
         fclose(f);
@@ -81,55 +91,58 @@ int main(int argc, const char * argv[]) {
             break;
     }
     
-    
+
+    m->prior = prior_eval;
+
     asprintf(&m->out_file, "%s%s", argv[4], ".txt");
     asprintf(&m->stats_file, "%s_stats%s", argv[4], ".txt");
     
     printf("part = %d,\noutput file: %s\n",m->part,m->out_file);
     printf("thinning = %d,\n", m->thin);    
     
-    // time-series of cases.
-    int length = 15;
-
-    // allocate struct to hold time-series data.
-//    m->ts = malloc(sizeof(data_s));
-//    m->ts->vec = gsl_vector_int_alloc(length);
-//    m->ts->vec->data = (int[]){1,0,3,11,27,40,24,15,15,4,4,0,1,0,1};
-//    m->ts->NF = 146;
-//    m->N = 164;
-
-    // larger time series
-//     m->ts = malloc(sizeof(data_s));
-//     m->ts->vec = gsl_vector_int_alloc(23);
-//     m->ts->vec->data = (int[]){0,2,1,2,3,7,12,10,38,40,61,58,54,58,47,23,11,4,4,3,1,0,1};
-//     m->ts->NF = 440;
-//     m->N = 500;
-
-    // larger time series
-
-    // Small boat
+    // time-series
     m->ts = malloc(sizeof(data_s));
-    m->ts->vec = gsl_vector_int_alloc(18);
-    m->ts->vec->data = (int[]){0,0,3,7,19,16,15,25,8,8,6,8,4,2,1,0,0,1};
-    m->ts->NF = 123;
-    m->N = 150;
 
-    // med boat.
-//    m->ts = malloc(sizeof(data_s));
-//    m->ts->vec = gsl_vector_int_alloc(20);
-//    m->ts->vec->data = (int[]) {0,0,2,12,5,20,25,44,34,53,47,42,34,25,23,12,4,3,2,1};
-//    m->ts->NF = 388;
-//    m->N = 500;
 
-//
-//     m->ts = malloc(sizeof(data_s));
-//     m->ts->vec = gsl_vector_int_alloc(26);
-//     m->ts->vec->data = (int[]){0,0,0,4,3,12,6,26,28,60,58,99,110,103,91,66,52,22,18,13,11,4,2,5,2,1};
-//     m->ts->NF = 796;
-//     m->N = 1000;
+    switch (atoi(argv[6])) {
+        case 1:
+            printf("Small boat\n");
 
-//   N = 1000,
-//
+            m->ts->vec = gsl_vector_int_alloc(18);
+            m->ts->vec->data = (int[]) {0, 0, 1, 8, 6, 14, 12, 15, 15, 14, 10, 5, 3, 8, 4, 2, 2, 2};
+            m->ts->NF = 121;
+            m->N = 150;
+            break;
+        case 2:
+            printf("Medium boat\n");
+            // med boat.
+            m->ts->vec = gsl_vector_int_alloc(26);
+            m->ts->vec->data = (int[]) {0, 0, 1, 8, 11, 10, 21, 17, 24, 32, 31, 29, 21, 19, 21, 7, 9, 8, 6, 3, 2, 4, 1,
+                                        1, 1, 1};
+            m->ts->NF = 288;
+            m->N = 350;
+            break;
+        case 3:
+            printf("Large boat\n");
+            m->ts->vec = gsl_vector_int_alloc(26);
+            m->ts->vec->data = (int[]) {0, 1, 1, 3, 4, 6, 3, 5, 11, 23, 22, 27, 18, 34, 39, 37, 28, 30, 28, 21, 12, 16,
+                                        7, 4, 1, 2};
+            m->ts->NF = 383;
+            m->N = 500;
+            break;
+        case 4:
+            printf("A bigger boat\n");
+            m->ts->vec = gsl_vector_int_alloc(26);
+            m->ts->vec->data = (int[]) {0, 0, 0, 0, 7, 2, 8, 7, 9, 17, 13, 38, 54, 48, 66, 82, 78, 81, 68, 54, 49, 37, 17, 14, 13, 5, 9, 3, 1, 1, 2, 1, 1, 1, 1, 2, 0, 0, 0, 1};
+            m->ts->NF = 790;
+            m->N = 1000;
+            break;
+        default:
+            printf("Which time series to use? 1,2,3 or 4");
+            exit(EXIT_FAILURE);
+            break;
+    }
+
 
     m->max_samples = pow(10,7);
     
