@@ -520,8 +520,8 @@ double SEIAR_likelihood_is(gsl_rng *r, PartStruct *X, gsl_vector *theta, data_s 
         // calculate the log-like contribution.
         LL[i] = log(gsl_stats_mean(X->w,1,part));
 
-//        resample_part(r,X);
-        multinomial_resample(r,X);
+        resample_part(r,X);
+//        multinomial_resample(r,X);
     }
     
     SEIAR_is(r, X, ts->vec->data[length-1],ts->NF);

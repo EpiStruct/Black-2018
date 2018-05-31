@@ -83,7 +83,36 @@ double test_likelihood( Config* m, gsl_vector* theta){
 
 
 
+void systematic_sample(const gsl_rng *r, const double *w, unsigned int *sample, const size_t K) {
+    // similar to the gsl multinomial function but using systematic sampling.
+    // this returns the ancestor index rather than the number of counts falling within each bin.
 
+    double w0 = 0.0;
+    for (int i = 0; i < K; i++) {
+        w0 += w[i];
+    }
+
+    double inc = w0 / (double) K;
+    double ac = inc * gsl_rng_uniform(r);
+
+    unsigned int i = 0;
+    unsigned int j = 0;
+
+    double upper_sum = w[0];
+
+    while (i < K) {
+
+        if (ac < upper_sum) {
+
+            sample[i] = j;
+            ac += inc;
+            i++;
+        } else {
+            j++;
+            upper_sum += w[j];
+        }
+    }
+}
 
 
 void resample_part(gsl_rng *r, PartStruct *X){
@@ -91,48 +120,27 @@ void resample_part(gsl_rng *r, PartStruct *X){
 
     const int part = X->part;
     const int events = X->events;
-    double cumsum[part];
-    int tmp_part[part][events];
-    
-    // calculate the cumulative sum of the weights
-    cumsum[0] = X->w[0];
-    for (int i = 1; i < part; ++i)
+    unsigned int n[part]; // holds the samples.
+
+    systematic_sample(r,X->w,n,part);
+
+    // move the particles around
+    for (int k = 0; k < part; ++k)
     {
-        cumsum[i] = X->w[i] + cumsum[i-1];
-    }
-    
-    for (int i = 0; i < part; ++i)
-    {
-        cumsum[i] = cumsum[i]/cumsum[part-1];
-    }
-    
-    
-    unsigned int new_samp[part];
-    
-    double inc = 1.0/part;
-    double u = gsl_rng_uniform(r)*inc ;
-    int i = 0;
-    for (int j = 0; j < part; ++j)
-    {
-        while(u > cumsum[i]){
-            ++i;
-        }
-        new_samp[j] = i;
-        
-        for (int k=0; k<events; k++) {
-            tmp_part[j][k] = X->Z[i*events+k];
-        }
-        
-        u = u + inc;
-    }
-    
-    for (int j = 0; j < part; j++)
-    {
-        // copy over the old particles.
+
         for (int i=0; i<events; i++) {
-            X->Z[j*events+i] = tmp_part[new_samp[j]][i];
+            X->Z_tmp[k*events+i] = X->Z[n[k]*events+i];
         }
-        
+
+    }
+
+    // copy back into the original array.
+    for (int k = 0; k < part; ++k)
+    {
+        for (int i=0; i<events; i++) {
+            X->Z[k*events+i] = X->Z_tmp[k*events+i];
+        }
+
     }
     
     

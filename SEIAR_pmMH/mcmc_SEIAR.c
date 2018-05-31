@@ -52,8 +52,8 @@ int main(int argc, const char * argv[]) {
     
     // boundaries and initial point.
     m->low->data = (double[]){0.1, 0.1, 0.5, 0.5, 0.0};
-    m->high->data = (double[]){15.0, 15.0, 15.0, 1.0, 1.0};
-    m->theta_init->data = (double[]){8.0, 1.0, 1.0, 0.9, 0.5};
+    m->high->data = (double[]){8.0, 15.0, 15.0, 1.0, 1.0};
+    m->theta_init->data = (double[]){2.0, 1.0, 1.0, 0.9, 0.5};
     
     // set the covariance matrix
     m->sigma = gsl_matrix_alloc(m->dim,m->dim);
@@ -132,7 +132,7 @@ int main(int argc, const char * argv[]) {
             break;
         case 4:
             printf("A bigger boat\n");
-            m->ts->vec = gsl_vector_int_alloc(26);
+            m->ts->vec = gsl_vector_int_alloc(40);
             m->ts->vec->data = (int[]) {0, 0, 0, 0, 7, 2, 8, 7, 9, 17, 13, 38, 54, 48, 66, 82, 78, 81, 68, 54, 49, 37, 17, 14, 13, 5, 9, 3, 1, 1, 2, 1, 1, 1, 1, 2, 0, 0, 0, 1};
             m->ts->NF = 790;
             m->N = 1000;
