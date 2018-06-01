@@ -25,6 +25,7 @@ typedef struct
     int *Z;
     int *Z_tmp;
     double *w;
+    unsigned int *n;
 } PartStruct;
 
 

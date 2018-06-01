@@ -297,6 +297,10 @@ void SEIAR_is(gsl_rng *r, PartStruct *X, int NR, int NF){
         X->Z[i*5+4] = Z[4];
         
         X->w[i] = exp(L_imp);
+
+//        if(isnan(X->w[i])){
+//
+//        }
         
     }
     
@@ -501,7 +505,7 @@ double SEIAR_likelihood_is(gsl_rng *r, PartStruct *X, gsl_vector *theta, data_s 
     }
 
     int part = X->part;
-    
+
     // set initial conditions.
     for (int i = 0; i < part; i++){
         
@@ -520,10 +524,19 @@ double SEIAR_likelihood_is(gsl_rng *r, PartStruct *X, gsl_vector *theta, data_s 
         // calculate the log-like contribution.
         LL[i] = log(gsl_stats_mean(X->w,1,part));
 
-        resample_part(r,X);
-//        multinomial_resample(r,X);
+
+        if(isinf(LL[i])){
+
+            return -INFINITY;
+        }
+
+
+//        resample_part(r,X);
+        multinomial_resample(r,X);
     }
-    
+
+
+
     SEIAR_is(r, X, ts->vec->data[length-1],ts->NF);
 
     LL[length-1] = log(gsl_stats_mean(X->w,1,part));

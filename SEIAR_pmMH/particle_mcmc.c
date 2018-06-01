@@ -27,6 +27,7 @@ PartStruct *init_part(int part,int events, int parameters){
     
     p->par = gsl_vector_alloc(parameters);
     p->w = calloc(part,sizeof(p->w));
+    p->n = calloc(part,sizeof(p->n));
     
     return p;
 }
@@ -92,6 +93,7 @@ void systematic_sample(const gsl_rng *r, const double *w, unsigned int *sample, 
         w0 += w[i];
     }
 
+
     double inc = w0 / (double) K;
     double ac = inc * gsl_rng_uniform(r);
 
@@ -102,7 +104,7 @@ void systematic_sample(const gsl_rng *r, const double *w, unsigned int *sample, 
 
     while (i < K) {
 
-        if (ac < upper_sum) {
+        if (ac <= upper_sum) {
 
             sample[i] = j;
             ac += inc;
@@ -120,16 +122,16 @@ void resample_part(gsl_rng *r, PartStruct *X){
 
     const int part = X->part;
     const int events = X->events;
-    unsigned int n[part]; // holds the samples.
+//    unsigned int n[part]; // holds the samples.
 
-    systematic_sample(r,X->w,n,part);
+    systematic_sample(r,X->w,X->n,part);
 
     // move the particles around
     for (int k = 0; k < part; ++k)
     {
 
         for (int i=0; i<events; i++) {
-            X->Z_tmp[k*events+i] = X->Z[n[k]*events+i];
+            X->Z_tmp[k*events+i] = X->Z[X->n[k]*events+i];
         }
 
     }
@@ -150,16 +152,16 @@ void multinomial_resample(gsl_rng *r, PartStruct *X){
 
     const int part = X->part;
     const int events = X->events;
-    unsigned int n[part]; // holds the samples.
+//    unsigned int n[part]; // holds the samples.
 
-    gsl_ran_multinomial(r,part,part,X->w,n);
+    gsl_ran_multinomial(r,part,part,X->w,X->n);
 
     // sample particles into the tmp array
     int count = 0;
 
     for (int k = 0; k < part; ++k)
     {
-        for(int l = 0; l < n[k]; l++){
+        for(int l = 0; l < X->n[k]; l++){
 
             for (int i=0; i<events; i++) {
                 X->Z_tmp[count*events+i] = X->Z[k*events+i];
@@ -330,7 +332,7 @@ void mcmc_time(Config *m){
     // write the stats file
     FILE * f = fopen (m->stats_file, "w");
     
-    fprintf(f, "%ld %f",time_now-start_time,(double)ar/os);
+    fprintf(f, "%ld %f %d",time_now-start_time,(double)ar/os,X->part);
     
     fclose (f);
  
