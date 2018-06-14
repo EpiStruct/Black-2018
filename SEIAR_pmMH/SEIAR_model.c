@@ -328,7 +328,7 @@ double SEIAR_alive(gsl_rng *r, PartStruct *X, int NR, int NF){
     const int Z2_max = N-NF;
     
     // max number of trials before we stop because prob is too low.
-    int K = 100000;
+    int K = 1000000;
 
     int j = 0;
     int n = 0;

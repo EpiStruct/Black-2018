@@ -21,11 +21,10 @@
 
 double prior_eval(gsl_vector* theta){
     // evaluate the prior at theta.
-    double R0_p = 1.0; //log(gsl_ran_gamma_pdf(theta->data[0],10.0,2.0/10.0));
     double sig_p = log(gsl_ran_gamma_pdf(theta->data[1],10.0,1.0/10.0));
     double gam_p = log(gsl_ran_gamma_pdf(theta->data[2],10.0,1.0/10.0));
 
-    return R0_p + sig_p +  gam_p;
+    return sig_p +  gam_p;
 }
 
 int main(int argc, const char * argv[]) {
@@ -144,7 +143,7 @@ int main(int argc, const char * argv[]) {
     }
 
 
-    m->max_samples = pow(10,7);
+    m->max_samples = (int)pow(10,7);
     
     // run the mcmc for given length of time.
     mcmc_time(m);
