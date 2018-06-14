@@ -10,15 +10,16 @@ just run make.
 
 Once compiled, the program is run with the following arguments
 
-./mcmc_SEIAR particles thin runtime name algo
+./mcmc_SEIAR particles thin runtime name algo timeseries
 
 - particles - the number of particles to use.
 - thin - thinning of the chain.
 - runtime - length of time to run for in minutes.
 - name - name of file to save samples and stats to.
 - algo - 1 or 2. 1 uses importance sampling, 2 uses the alive sampling. 
+- timeseries - 1,2,3 or 4 corresponding to the data in the paper
 
-For example: ./mcmc_SEIAR 50 10 15 some_output 1
+For example: ./mcmc_SEIAR 50 10 15 some_output 1 1
 
 Note that the other mcmc parameters and the data are hard coded in the file mcmc_SEIAR.c
 There is very little checking done by this program so it will not detect incorrect parameters range / types or invalid file names, so be careful.
