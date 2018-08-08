@@ -295,8 +295,9 @@ void SEIAR_is(gsl_rng *r, PartStruct *X, int NR, int NF){
         X->Z[i*5+2] = Z[2];
         X->Z[i*5+3] = Z[3];
         X->Z[i*5+4] = Z[4];
-        
-        X->w[i] = exp(L_imp);
+
+        // no longer doing the exponential here and w is now a vector.
+        X->w->data[i] = L_imp;
 
 //        if(isnan(X->w[i])){
 //
@@ -521,25 +522,41 @@ double SEIAR_likelihood_is(gsl_rng *r, PartStruct *X, gsl_vector *theta, data_s 
         // simulate forward a day.
         SEIAR_is(r, X, ts->vec->data[i],ts->NF);
         
-        // calculate the log-like contribution.
-        LL[i] = log(gsl_stats_mean(X->w,1,part));
+        // calculate the log-like contribution using the log_sum_exp trick.
 
+        // find the index of the largest log-weight.
+        double w_max = gsl_vector_max(X->w);
 
-        if(isinf(LL[i])){
+        double w0 = 0.0;
 
-            return -INFINITY;
+        for (int j = 0; j < part ; ++j) {
+            X->w->data[j] = exp(X->w->data[j] - w_max);
+            w0 = w0 + X->w->data[j];
         }
 
+        LL[i] = -log(part) + w_max + log(w0);
 
-//        resample_part(r,X);
-        multinomial_resample(r,X);
+        // resampling now uses the renormalised weights.
+        resample_part(r,X);
+//        multinomial_resample(r,X);
     }
-
 
 
     SEIAR_is(r, X, ts->vec->data[length-1],ts->NF);
 
-    LL[length-1] = log(gsl_stats_mean(X->w,1,part));
+    // find the index of the largest log-weight.
+    double w_max = gsl_vector_max(X->w);
+
+    double w0 = 0.0;
+
+    for (int j = 0; j < part ; ++j) {
+        X->w->data[j] = exp(X->w->data[j] - w_max);
+        w0 = w0 + X->w->data[j];
+    }
+
+    LL[length-1] = -log(part) + w_max + log(w0);
+
+//    LL[length-1] = log(gsl_stats_mean(X->w,1,part));
 
     
     double LL_tot = 0;

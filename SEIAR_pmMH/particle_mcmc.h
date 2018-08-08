@@ -24,7 +24,7 @@ typedef struct
     gsl_vector *par;
     int *Z;
     int *Z_tmp;
-    double *w;
+    gsl_vector *w;
     unsigned int *n;
 } PartStruct;
 

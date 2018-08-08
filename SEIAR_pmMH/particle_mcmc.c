@@ -15,7 +15,7 @@
 
 
 
-PartStruct *init_part(int part,int events, int parameters){
+PartStruct *init_part(int part, int events, int parameters){
     // initialise the particle array and return a pointer to it.
     
     PartStruct *p;
@@ -26,7 +26,7 @@ PartStruct *init_part(int part,int events, int parameters){
     p->Z_tmp = calloc( part * events, sizeof(p->Z_tmp));
     
     p->par = gsl_vector_alloc(parameters);
-    p->w = calloc(part,sizeof(p->w));
+    p->w = gsl_vector_alloc(part);
     p->n = calloc(part,sizeof(p->n));
     
     return p;
@@ -53,7 +53,7 @@ void print_state(PartStruct *p){
             
         }
         
-        printf("w=%f \n",p->w[i]);
+        printf("w=%f \n",p->w->data[i]);
     }
     
 }
@@ -84,13 +84,13 @@ double test_likelihood( Config* m, gsl_vector* theta){
 
 
 
-void systematic_sample(const gsl_rng *r, const double *w, unsigned int *sample, const size_t K) {
+void systematic_sample(const gsl_rng *r, const gsl_vector *w, unsigned int *sample, const size_t K) {
     // similar to the gsl multinomial function but using systematic sampling.
     // this returns the ancestor index rather than the number of counts falling within each bin.
 
     double w0 = 0.0;
     for (int i = 0; i < K; i++) {
-        w0 += w[i];
+        w0 += w->data[i];
     }
 
 
@@ -100,7 +100,7 @@ void systematic_sample(const gsl_rng *r, const double *w, unsigned int *sample, 
     unsigned int i = 0;
     unsigned int j = 0;
 
-    double upper_sum = w[0];
+    double upper_sum = w->data[0];
 
     while (i < K) {
 
@@ -111,7 +111,7 @@ void systematic_sample(const gsl_rng *r, const double *w, unsigned int *sample, 
             i++;
         } else {
             j++;
-            upper_sum += w[j];
+            upper_sum += w->data[j];
         }
     }
 }
@@ -122,7 +122,6 @@ void resample_part(gsl_rng *r, PartStruct *X){
 
     const int part = X->part;
     const int events = X->events;
-//    unsigned int n[part]; // holds the samples.
 
     systematic_sample(r,X->w,X->n,part);
 
@@ -154,7 +153,7 @@ void multinomial_resample(gsl_rng *r, PartStruct *X){
     const int events = X->events;
 //    unsigned int n[part]; // holds the samples.
 
-    gsl_ran_multinomial(r,part,part,X->w,X->n);
+    gsl_ran_multinomial(r,part,part,X->w->data,X->n);
 
     // sample particles into the tmp array
     int count = 0;

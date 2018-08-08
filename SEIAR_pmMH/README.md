@@ -2,6 +2,8 @@
 
 This code implements the particle marginal Metropolis Hastings algorithm using an alive particle filter and importance sampling, as described in Section 8 of the paper. This is coded in C and requires the [GNU Scientific Library](https://www.gnu.org/software/gsl/).
 
+Since the paper was published, I have improved the code a little bit. In particular, I now calculate the log-likelihood contributions using a [LogSumExp trick](https://en.wikipedia.org/wiki/LogSumExp), which makes this much more numerically stable. I have also switched to using systematic re-sampling rather than multinomial. From the few tests I've done, the performance is now a bit better than what was reported in the paper in Table 1. 
+
 ## compiling
 
 just run make.
